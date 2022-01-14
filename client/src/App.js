@@ -15,6 +15,8 @@ import { withStyles } from '@mui/material/styles';
 
 
 
+import Stack from '@mui/material/Stack';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 
@@ -27,6 +29,10 @@ const styles = theme => ({
   },
   table: {
     minWidth : 1080
+  },
+
+  progress: {
+    margin: theme.spacing.unit * 2
   }
 })
 
@@ -37,11 +43,12 @@ const styles = theme => ({
 class App extends Component{
   
     state = {
-      customers: ""
-      
+      customers: "",
+      completed: 0
     }
 
     componentDidMount() {
+      this.timer = setInterval(this.progress, 20);
       this.callApi()
         .then(res=>this.setState({customers: res}))
         .catch(err=>console.log(err));
@@ -52,6 +59,12 @@ class App extends Component{
       const body = await response.json();
       return body;
     }
+
+    progress = () => {
+      const { completed } = this.state;
+      this.setState({ completed: completed >= 100 ? 0 : completed + 1});
+    }
+
 
     render(){
     const { classes } = this.props;
@@ -73,7 +86,17 @@ class App extends Component{
                 </TableHead>
                 <TableBody>
                     {this.state.customers ? this.state.customers.map(c=>{return ( <Customer key={c.id} id={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job}/>);
-                    }): ""}
+                    }): 
+                    
+                    <Stack spacing={2} direction="row">
+                    <CircularProgress variant="determinate" value={25} />
+                    <CircularProgress variant="determinate" value={50} />
+                    <CircularProgress variant="determinate" value={75} />
+                    <CircularProgress variant="determinate" value={100} />
+                    <CircularProgress variant="determinate" value={this.state.completed} />
+                    </Stack>
+                    
+                    }
         
                 </TableBody>
               </Table>
