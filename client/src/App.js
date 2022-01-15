@@ -3,6 +3,9 @@ import Customer from './components/Customer'
 import './App.css';
 
 
+import CustomerAdd from './components/CustomerAdd';
+
+
 import Paper from '@mui/material/Paper';
 
 import Table from '@mui/material/Table';
@@ -41,11 +44,32 @@ const styles = theme => ({
 
 
 class App extends Component{
-  
+
+  /*
     state = {
       customers: "",
       completed: 0
     }
+*/
+    constructor(props) {
+      super(props);
+      this.state = {
+        customers: '',
+        completed: 0
+      }
+    }
+
+    stateRefresh = () => {
+      this.setState({
+        customers: '',
+        completed: 0
+      });
+      this.callApi()
+      .then(res=>this.setState({customers: res}))
+      .catch(err=>console.log(err));
+
+    }
+
 
     componentDidMount() {
       this.timer = setInterval(this.progress, 20);
@@ -71,6 +95,7 @@ class App extends Component{
 
 
     return (
+      <div>
       <Paper>
               <Table>
                 <TableHead>
@@ -101,6 +126,11 @@ class App extends Component{
                 </TableBody>
               </Table>
       </Paper>
+
+      <CustomerAdd stateRefresh={this.stateRefresh}/>
+
+
+      </div>
     );
   }
 }
